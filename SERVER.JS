@@ -5,7 +5,9 @@ const bodyParser = require("body-parser");
 var cors = require("cors")
 const {response} = require('express')
 const app = express();
-const X2JS = require('x2js')
+const X2JS = require('x2js');
+const { Server } = require("http");
+const { exit } = require("process");
 
 app.use(cors())
 
@@ -254,6 +256,17 @@ request(options, function (error, response) {
 });
 
 })
+
+app.get('/shutdown',function(req,res)
+{
+
+ 
+  exit();
+
+
+})
+
+
 
 
 app.listen(3030,()=>
