@@ -8,7 +8,9 @@ const app = express();
 const X2JS = require('x2js');
 const { Server } = require("http");
 const { exit } = require("process");
-
+const accountSid = 'ACdbc551338855ad25fedecadf7207e3b2'; 
+const authToken = '4a8a86283a98ca659dc179353042860a'; 
+const client = require('twilio')(accountSid, authToken); 
 app.use(cors())
 
 
@@ -49,11 +51,40 @@ request(options, function (error, response) {
   console.log(response.body);
   var x2js = new X2JS();
   result = x2js.xml2js(response.body)
-    result = JSON.stringify(result)
+  result = JSON.stringify(result)
+  console.log(result)
+  var status = response.body;
+  status = x2js.xml2js(status)
+  status=status['Envelope']['Body']['ZFM_LOGIN_VP_MD.Response']['E_MESSAGE']
+  console.log(status)
+  if(status == "S")
+  {
+    client.messages 
+      .create({ 
+         body: 'Login Attempt Made!Login Successful!',  
+         messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
+         to: '+919150064160' 
+       }) 
+      .then(message => console.log(message.sid)) 
+      .done();
+  }
+  else{
+    client.messages 
+      .create({ 
+         body: 'Login Attempt Made!Login Failure!Check Credentials',  
+         messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
+         to: '+919150064160' 
+       }) 
+      .then(message => console.log(message.sid)) 
+      .done();
+
+  }
   
   res.send(result);
-  res.end();
-});
+
+ 
+ });
+
 })
 
 app.get('/getauth',function(req,res)
