@@ -8,9 +8,11 @@ const app = express();
 const X2JS = require('x2js');
 const { Server } = require("http");
 const { exit } = require("process");
+require('dotenv').config();
 const accountSid = 'ACdbc551338855ad25fedecadf7207e3b2'; 
-const authToken = '4a8a86283a98ca659dc179353042860a'; 
+const authToken = process.env.AUTH; 
 const client = require('twilio')(accountSid, authToken); 
+const folderPath = "D:/payslip";
 app.use(cors())
 
 
@@ -57,28 +59,28 @@ request(options, function (error, response) {
   status = x2js.xml2js(status)
   status=status['Envelope']['Body']['ZFM_LOGIN_VP_MD.Response']['E_MESSAGE']
   console.log(status)
-  if(status == "S")
-  {
-    client.messages 
-      .create({ 
-         body: 'Login Attempt Made!Login Successful!',  
-         messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
-         to: '+919150064160' 
-       }) 
-      .then(message => console.log(message.sid)) 
-      .done();
-  }
-  else{
-    client.messages 
-      .create({ 
-         body: 'Login Attempt Made!Login Failure!Check Credentials',  
-         messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
-         to: '+919150064160' 
-       }) 
-      .then(message => console.log(message.sid)) 
-      .done();
+  // if(status == "S")
+  // {
+  //   client.messages 
+  //     .create({ 
+  //        body: 'Login Attempt Made!Login Successful!',  
+  //        messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
+  //        to: '+919150064160' 
+  //      }) 
+  //     .then(message => console.log(message.sid)) 
+  //     .done();
+  // }
+  // else{
+  //   client.messages 
+  //     .create({ 
+  //        body: 'Login Attempt Made!Login Failure!Check Credentials',  
+  //        messagingServiceSid: 'MG3b1bb34d27f2176205c43dbd554b58e0',      
+  //        to: '+919150064160' 
+  //      }) 
+  //     .then(message => console.log(message.sid)) 
+  //     .done();
 
-  }
+  // }
   
   res.send(result);
 
@@ -294,6 +296,20 @@ app.get('/shutdown',function(req,res)
  
   exit();
 
+
+})
+
+app.get('/pdf',function(req,res)
+{
+
+ 
+  res.download(folderPath+'/invoice.pdf', function(err) {
+    if(err) {
+        console.log(err);
+    }
+
+
+  })
 
 })
 
