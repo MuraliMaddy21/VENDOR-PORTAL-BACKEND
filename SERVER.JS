@@ -16,6 +16,8 @@ const folderPath = "D:/payslip";
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 app.use(cors())
+const session = require('express-session');
+
 
 
 app.use(bodyParser.json())
@@ -25,6 +27,11 @@ var password;
 var auth;
 var otp;
 
+app.use(session({
+  secret: 'mysecret', // use a secret key to sign the session ID cookie
+  resave: false,
+  saveUninitialized: true,
+}));
 
 app.post('/otp',function(req,res)
 {
@@ -361,10 +368,22 @@ app.get('/shutdown',function(req,res)
 {
 
  
-  exit();
-
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Session destroyed');
+      res.send('Session destroyed');
+    }
+  });
+  
 
 })
+
+
+  
+
+
 
 app.get('/pdf',function(req,res)
 {
